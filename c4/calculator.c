@@ -8,7 +8,14 @@ int getop(char []);
 void push(double);
 double pop(void);
 
-// reverse polish calculator
+/*
+* reverse polish calculator
+*
+* rules
+* enter as the reverse polish notation and have spaces between operators and numbers
+* no leading sign before positive number
+* negative facation number must have number before .
+*/
 int main()
 {
 	int type;
@@ -36,9 +43,13 @@ int main()
 			op2 = pop();
 			push(pop() / op2);
 			break;
+		case '%':
+			op2 = pop();
+			push((int)pop() % (int)op2);
+			break;
 		case '\n':
 			printf("answer:\t%.8g\n", pop());
-			break:
+			break;
 		default:
 			printf("error: unknown command (ascii):\t%d\n", type);
 			break;
@@ -81,12 +92,20 @@ void ungetch(int);
 int getop(char s[])
 {
 	int i, c;
+	
 	while((s[0] = c = getch()) == ' ' || c == '\t')	// skip blanks and tabs
 		;	
-	s[1] = '\0';
-	if(!isdigit(c) && c != '.')
-		return c;	// not a number
+
+	if(!isdigit(c) && c != '.' && c != '-')		// operators except '-'
+		return c;
+
 	i = 0;
+	if(c == '-' && !isdigit(s[++i] = c = getch())) 	// not a negetive number but only a single '-'
+	{
+		ungetch(c);
+		return '-';
+	}
+	
 	if(isdigit(c))
 		while(isdigit(s[++i] = c = getch()))
 			;
